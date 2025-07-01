@@ -1,4 +1,4 @@
-// Load tasks from localStorage or initialize
+// Load tasks from localStorage or initiali// real time updates using WebSocket
 let tasks = JSON.parse(localStorage.getItem("tasks")) || [];
 let projects = JSON.parse(localStorage.getItem("projects")) || [
   { id: "proj-1", name: "Default Project", tasks: tasks },
@@ -7,6 +7,7 @@ let projects = JSON.parse(localStorage.getItem("projects")) || [
 let currentProjectId = "proj-1"; // default
 
 document.addEventListener("DOMContentLoaded", () => {
+  connectWebSocket();
   renderTasks();
   renderProjectList();
 });
@@ -251,30 +252,47 @@ function renderAssigneeChart(
   });
 }
 
-// drag and drop functionality
-document
-  .querySelectorAll("#todo-column, #inprogress-column, #done-column")
-  .forEach((column) => {
-    column.addEventListener("dragover", (e) => {
-      e.preventDefault();
-    });
+// Initialize drag & drop columns
+["todo", "inprogress", "done"].forEach((status) => {
+  const column = document.getElementById(`${status}-column`);
 
-    column.addEventListener("drop", (e) => {
-      e.preventDefault();
-      let tasks = projects.find((p) => p.id === currentProjectId).tasks;
-      const taskId = e.dataTransfer.getData("text/plain");
-      const task = tasks.find((t) => t.id === taskId);
-      console.log("Task dropped:", task);
-      if (task) {
-        task.status = column.id.replace("-column", "");
-        localStorage.setItem("tasks", JSON.stringify(tasks));
-        localStorage.setItem("projects", JSON.stringify(projects));
-        renderTasks();
-        renderStatusChart();
-        renderAssigneeChart();
-      }
-    });
-  });
+  column.addEventListener("dragover", (e) => e.preventDefault());
+
+  column.addEventListener("drop", (e) => handleDrop(e, status));
+});
+
+// Handle drop logic
+function handleDrop(event, newStatus) {
+  event.preventDefault();
+
+  const taskId = event.dataTransfer.getData("text/plain");
+  const project = projects.find((p) => p.id === currentProjectId);
+  const task = project?.tasks?.find((t) => t.id === taskId);
+
+  if (!task) return;
+
+  // task.status = newStatus;
+
+  // // Save to localStorage
+  // localStorage.setItem("projects", JSON.stringify(projects));
+
+  // // Re-render
+  // renderTasks();
+  // renderStatusChart();
+  // renderAssigneeChart();
+  if (socket.readyState === WebSocket.OPEN) {
+    socket.send(
+      JSON.stringify({
+        type: "task-update",
+        projectId: currentProjectId,
+        taskId: task.id,
+        status: newStatus,
+      })
+    );
+  } else {
+    alert("WebSocket is not connected. Please try again later.");
+  }
+}
 
 // Task creation
 document.getElementById("taskForm").addEventListener("submit", function (e) {
@@ -291,11 +309,21 @@ document.getElementById("taskForm").addEventListener("submit", function (e) {
     labels: [],
     comments: [],
   };
-  let project = projects.find((p) => p.id === currentProjectId);
-  // console.log("projects is", project);
-  project.tasks.push(newTask);
-  localStorage.setItem("tasks", JSON.stringify(tasks));
-  localStorage.setItem("projects", JSON.stringify(projects));
+  // // When a new task is created
+
+  // let project = projects.find((p) => p.id === currentProjectId);
+  // // console.log("projects is", project);
+  // project.tasks.push(newTask);
+  // localStorage.setItem("tasks", JSON.stringify(tasks));
+  // localStorage.setItem("projects", JSON.stringify(projects));
+  socket.send(
+    JSON.stringify({
+      type: "taskCreated",
+      task: newTask,
+      projectId: currentProjectId,
+    })
+  );
+
   renderTasks();
   renderCalendarView();
   renderStatusChart();
@@ -345,20 +373,28 @@ function addComment(taskId, comment, inputEl) {
   inputEl.value = "";
   renderTasks();
 }
+
 // delete task
 function deleteTask(taskId) {
   const confirmed = confirm("Are you sure you want to delete this task?");
   if (!confirmed) return;
-
-  const index = tasks.findIndex((t) => t.id === taskId);
-  if (index !== -1) {
-    tasks.splice(index, 1);
-    localStorage.setItem("tasks", JSON.stringify(tasks));
-    renderTasks();
-    renderCalendarView();
-    renderStatusChart();
-    renderAssigneeChart();
-  }
+  // let tasks = projects.find((p) => p.id === currentProjectId).tasks;
+  // const index = tasks.findIndex((t) => t.id === taskId);
+  // if (index !== -1) {
+  //   tasks.splice(index, 1);
+  //   localStorage.setItem("projects", JSON.stringify(projects));
+  // renderTasks();
+  // renderCalendarView();
+  // renderStatusChart();
+  // renderAssigneeChart();
+  // }
+  socket.send(
+    JSON.stringify({
+      type: "taskDeleted",
+      taskId: taskId,
+      projectId: currentProjectId,
+    })
+  );
 }
 function renderNestedComments(comments, taskId, path = []) {
   return `

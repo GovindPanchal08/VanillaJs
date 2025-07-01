@@ -1,0 +1,7 @@
+
+# ignore node module 
+node_modules/
+# ignore build output
+dist/
+# ignore logs
+logs/

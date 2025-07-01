@@ -1,0 +1,18 @@
+{
+  "proj-1": {
+    "name": "Default Project",
+    "tasks": [
+      {
+        "id": "task-1751392739151",
+        "title": "cws",
+        "description": "wc",
+        "dueDate": "2025-07-05",
+        "assignee": "mujhe",
+        "status": "inprogress",
+        "priority": "high",
+        "labels": [],
+        "comments": []
+      }
+    ]
+  }
+}
