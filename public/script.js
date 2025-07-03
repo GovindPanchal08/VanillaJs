@@ -158,38 +158,66 @@ function renderCalendarView(
   );
 
   calendarContainer.innerHTML = `
-    <h2 class="text-xl font-semibold mt-4 mb-4">📆 Calendar View</h2>
-    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-      ${sortedDates
-        .map((dueDate) => {
-          const taskCards = taskMap[dueDate]
-            .map((task, index) => {
-              const due = new Date(task.dueDate);
-              const diffDays = Math.ceil((due - today) / (1000 * 60 * 60 * 24));
+  <h2 class="text-3xl font-bold text-gray-900 mt-8 mb-6 flex items-center gap-3">
+    📅 Task Calendar
+    <span class="text-base font-normal text-gray-500"> — Stay ahead of your deadlines</span>
+  </h2>
 
-              // Color logic
-              let color = "bg-green-100 text-green-800";
-              if (diffDays < 0) color = "bg-red-100 text-red-800";
-              else if (diffDays <= 2) color = "bg-yellow-100 text-yellow-800";
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+    ${sortedDates
+      .map((dueDate) => {
+        const taskCards = taskMap[dueDate]
+          .map((task) => {
+            const due = new Date(task.dueDate);
+            const diffDays = Math.ceil((due - today) / (1000 * 60 * 60 * 24));
 
-              return `
-              <li class="rounded-md px-2 py-1 ${color}">
-                  <div class="font-medium"> ${index + 1} ${task.title}</div>
-                  <div class="text-xs">${task.status}</div>
-                </li>
+            // Color logic
+            let color = "bg-emerald-50 border-emerald-200 text-emerald-800";
+            if (diffDays < 0)
+              color = "bg-rose-50 border-rose-200 text-rose-800";
+            else if (diffDays <= 2)
+              color = "bg-amber-50 border-amber-200 text-amber-800";
 
-              `;
-            })
-            .join("");
+            // Priority badge color
+            const priorityColor =
+              task.priority === "high"
+                ? "bg-red-100 text-red-700"
+                : task.priority === "medium"
+                ? "bg-yellow-100 text-yellow-700"
+                : "bg-gray-100 text-gray-600";
 
-          return `
-            <div class="bg-white border rounded-lg p-4 shadow-sm">
-              <h3 class="font-semibold text-gray-800 mb-2">🗓️ ${dueDate}</h3>
-              <ul class="text-sm space-y-2">${taskCards}</ul>
-            </div>`;
-        })
-        .join("")}
-    </div>`;
+            return `
+              <li class="p-4 rounded-xl border ${color} shadow-sm hover:shadow-lg transition-all duration-300">
+                <div class="flex justify-between items-start">
+                  <div>
+                  <h4 class="font-semibold text-sm flex items-center gap-2">
+  ${task.status === "done" ? "✅" : "📝"} ${task.title}
+</h4>
+
+                    <p class="text-xs text-gray-500 mt-1">${task.assignee} • ${
+              task.status
+            }</p>
+                  </div>
+                  <span class="text-xs px-2 py-0.5 rounded-full ${priorityColor} capitalize">${
+              task.priority
+            }</span>
+                </div>
+              </li>`;
+          })
+          .join("");
+
+        return `
+          <div class="bg-white/70 backdrop-blur-md border border-gray-200 rounded-2xl p-5 shadow-lg hover:shadow-xl transition-all duration-300">
+            <div class="flex items-center justify-between mb-4">
+              <div class="text-lg font-bold text-gray-800">📆 ${dueDate}</div>
+              <span class="text-xs font-medium text-gray-500">${taskMap[dueDate].length} Task(s)</span>
+            </div>
+            <ul class="space-y-4">${taskCards}</ul>
+          </div>`;
+      })
+      .join("")}
+  </div>
+`;
 }
 
 // chart.js

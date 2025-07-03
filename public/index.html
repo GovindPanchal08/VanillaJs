@@ -13,17 +13,21 @@
       referrerpolicy="no-referrer"
     ></script>
   </head>
-  <body class="flex min-h-screen bg-gray-100 text-gray-800">
+  <body class="flex min-h-screen bg-slate-100 text-gray-800">
     <!-- Sidebar -->
-    <aside class="w-72 bg-white border-r shadow-md p-6 flex flex-col gap-8">
+    <aside
+      class="w-72 bg-white border-r shadow-md p-6 flex flex-col gap-8 rounded-lg m-2"
+    >
       <div>
-        <h1 class="text-3xl font-bold text-violet-600">✨ TaskFlow</h1>
-        <p class="text-md text-gray-500 mt-2">Organize your team, fast.</p>
+        <h1 class="text-3xl font-bold text-violet-600">🧩 TaskShaala</h1>
+        <p class="text-sm text-gray-500 mt-3">
+          Yahan har task milta hai full attention.
+        </p>
       </div>
 
       <button
         onclick="openTaskModal()"
-        class="bg-gradient-to-r from-violet-500 to-indigo-500 text-white px-4 py-2 rounded-lg font-medium shadow hover:shadow-lg transition"
+        class="shadow-lg hover:scale-95 bg-gradient-to-r from-violet-500 to-indigo-500 text-white px-4 py-2 rounded-lg font-medium shadow hover:shadow-lg transition"
       >
         ➕ Add Task
       </button>
@@ -56,7 +60,7 @@
         <ul id="projects" class="space-y-1 text-gray-700"></ul>
         <button
           id="new-project-btn"
-          class="text-sm text-violet-500 hover:text-violet-600 mt-4 flex items-center gap-2"
+          class="hover:scale-95 text-sm text-violet-500 hover:text-violet-600 mt-4 flex items-center gap-2"
         >
           ➕ New Project
         </button>
@@ -66,7 +70,7 @@
     <!-- Main Section -->
     <main class="flex-1 p-4 overflow-auto">
       <!-- Top Tabs -->
-      <div class="flex rounded-xl gap-6 border-b bg-white px-6 py-3 shadow-sm">
+      <div class="flex rounded-xl gap-6 border-b bg-white px-6 py-3 shadow-md">
         <button class="tab-button tab-active" data-tab="board">📋 Board</button>
         <button class="tab-button" data-tab="calendar">📆 Calendar</button>
         <button class="tab-button" data-tab="reports">📊 Reports</button>
@@ -191,13 +195,13 @@
             <button
               type="button"
               onclick="closeTaskModal()"
-              class="px-4 py-2 bg-gray-200 rounded-md"
+              class="px-4 py-2 bg-gray-200 rounded-md hover:bg-gray-300 hover:scale-95 transition"
             >
               Cancel
             </button>
             <button
               type="submit"
-              class="px-4 py-2 bg-violet-600 text-white rounded-md"
+              class="px-4 py-2 bg-violet-600 text-white hover:scale-95 rounded-md"
             >
               Create
             </button>

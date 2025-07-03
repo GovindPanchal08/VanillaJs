@@ -2,9 +2,9 @@ let socket
 function connectWebSocket() {
   socket = new WebSocket("ws://localhost:3000");
 
-  socket.addEventListener("open", () => {
-    console.log("WebSocket connection established");
-  });
+  // socket.addEventListener("open", () => {
+  //   console.log("WebSocket connection established");
+  // });
   socket.addEventListener("open", () => {
     socket.send(
       JSON.stringify({ type: "getInitialData", projectId: currentProjectId })
@@ -118,7 +118,7 @@ function connectWebSocket() {
   });
 
   socket.addEventListener("close", () => {
-    console.log("WebSocket connection closed");
+    // console.log("WebSocket connection closed");
     // Optionally, you can try to reconnect here
     setTimeout(connectWebSocket, 10);
   });

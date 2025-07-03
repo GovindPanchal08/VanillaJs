@@ -3,12 +3,12 @@
     "name": "Default Project",
     "tasks": [
       {
-        "id": "task-1751392739151",
-        "title": "cws",
-        "description": "wc",
+        "id": "task-1751547922380",
+        "title": "some",
+        "description": "thing",
         "dueDate": "2025-07-05",
         "assignee": "mujhe",
-        "status": "inprogress",
+        "status": "todo",
         "priority": "high",
         "labels": [],
         "comments": []
