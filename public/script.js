@@ -391,16 +391,25 @@ function toggleComments(taskId) {
   const commentBox = document.getElementById(`comments-${taskId}`);
   commentBox.classList.toggle("hidden");
 }
-function addComment(taskId, comment, inputEl) {
-  if (!comment.trim()) return;
+// function addComment(taskId, comment, inputEl) {
+//   if (!comment.trim()) return;
+//   const project = projects.find((p) => p.id === currentProjectId).tasks;
+//   const task = project.find((t) => t.id === taskId);
+//   task.comments.push({ text: comment, replies: [] });
+//   localStorage.setItem("tasks", JSON.stringify(tasks));
+//   console.log(project);
+//   inputEl.value = "";
+//   renderTasks();
 
-  const task = tasks.find((t) => t.id === taskId);
-  task.comments.push(comment);
-  localStorage.setItem("tasks", JSON.stringify(tasks));
-
-  inputEl.value = "";
-  renderTasks();
-}
+//   socket.send(
+//     JSON.stringify({
+//       type: "addComment",
+//       taskId: taskId,
+//       projectId: currentProjectId,
+//       comment: comment, // ✅ Send comment content
+//     })
+//   );
+// }
 
 // delete task
 function deleteTask(taskId) {
@@ -459,8 +468,9 @@ function toggleReplyBox(taskId, pathId) {
 
 function addNestedReply(taskId, pathId, text, inputEl) {
   if (!text.trim()) return;
-  let tasks = projects.find((p) => p.id === currentProjectId).tasks;
-  const task = tasks.find((t) => t.id === taskId);
+
+  const project = projects.find((p) => p.id === currentProjectId);
+  const task = project.tasks.find((t) => t.id === taskId);
   let comments = task.comments;
 
   if (pathId) {
@@ -470,10 +480,25 @@ function addNestedReply(taskId, pathId, text, inputEl) {
     }
   }
 
-  comments.push({ text, replies: [] });
-  localStorage.setItem("tasks", JSON.stringify(tasks));
+  const replyObj = { text, replies: [] };
+  comments.push(replyObj);
+
+  localStorage.setItem("projects", JSON.stringify(projects));
   inputEl.value = "";
   renderTasks();
+  console.log(projects);
+
+  // 🔁 Send real-time update
+  socket.send(
+    JSON.stringify({
+      type: "addNestedReply",
+      taskId,
+      projectId: currentProjectId,
+      pathId,
+      text,
+    })
+  );
+ 
 }
 
 // basics of filter tasks

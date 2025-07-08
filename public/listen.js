@@ -1,4 +1,4 @@
-let socket
+let socket;
 function connectWebSocket() {
   socket = new WebSocket("ws://localhost:3000");
 
@@ -111,6 +111,54 @@ function connectWebSocket() {
       }
     }
     // You can handle "taskUpdated", "taskDeleted" similarly
+  });
+  // Comments
+  socket.addEventListener("message", async (event) => {
+    let data;
+    if (event.data instanceof Blob) {
+      const text = await event.data.text();
+      data = JSON.parse(text);
+    } else {
+      data = JSON.parse(event.data);
+    }
+
+    if (data.type === "addNestedReply" && data.projectId === currentProjectId) {
+      const project = projects.find((p) => p.id === data.projectId);
+      const task = project.tasks.find((t) => t.id === data.taskId);
+      let comments = task.comments;
+
+      if (data.pathId) {
+        const indices = data.pathId.split("-").map(Number);
+        for (let i = 0; i < indices.length; i++) {
+          comments = comments[indices[i]].replies;
+        }
+      }
+
+      comments.push({ text: data.text, replies: [] });
+
+      localStorage.setItem("projects", JSON.stringify(projects));
+      renderTasks();
+    }
+  });
+
+  socket.addEventListener("message", async (event) => {
+    let data;
+    if (event.data instanceof Blob) {
+      const text = await event.data.text();
+      data = JSON.parse(text);
+    } else {
+      data = JSON.parse(event.data);
+    }
+
+    if (data.type === "addComment" && data.projectId === currentProjectId) {
+      const project = projects.find((p) => p.id === data.projectId);
+      const task = project.tasks.find((t) => t.id === data.taskId);
+      if (task) {
+        task.comments.push({ text: data.comment, replies: [] });
+        localStorage.setItem("projects", JSON.stringify(projects));
+        renderTasks();
+      }
+    }
   });
 
   socket.addEventListener("error", (error) => {

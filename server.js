@@ -40,7 +40,7 @@ wss.on("connection", (ws) => {
       const project = projects[data.projectId] || { tasks: [] };
       ws.send(JSON.stringify({ type: "initialData", tasks: project.tasks }));
     }
-    
+
     if (data.type === "taskCreated") {
       const project = projects[data.projectId];
       project.tasks.push(data.task);
@@ -90,6 +90,69 @@ wss.on("connection", (ws) => {
 
     if (data.type === "getProjects") {
       ws.send(JSON.stringify({ type: "projectsList", projects }));
+    }
+
+    // if (data.type === "addComment") {
+    //   const project = projects[data.projectId].tasks
+    //   if (!project) return;
+
+    //   const task = project.find((t) => t.id === data.taskId);
+    //   if (!task) return;
+
+    //   // For now, let's just push a basic sample comment
+    //   const commentText = data.comment || "New comment"; // You MUST send this from frontend
+    //   task.comments.push({ text: commentText, replies: [] });
+
+    //   // Optional: persist to file
+    //   saveProjectsToFile();
+
+    //   broadcast(
+    //     JSON.stringify({
+    //       type: "addComment",
+    //       taskId: data.taskId,
+    //       projectId: data.projectId,
+    //       comment: commentText,
+    //     })
+    //   );
+    // }
+    if (data.type === "addNestedReply") {
+      const projectEntry = projects[data.projectId];
+      if (!projectEntry) return;
+
+      const task = projectEntry.tasks.find((t) => t.id === data.taskId);
+      if (!task) return;
+
+      let comments = task.comments;
+      if (!comments) return;
+
+      const commentText = data?.text || "New comment";
+
+      if (data.pathId) {
+        const indices = data.pathId.split("-").map(Number);
+        for (let i = 0; i < indices.length; i++) {
+          if (!comments[indices[i]]) return;
+          comments = comments[indices[i]].replies ||= [];
+        }
+      }
+
+      const replyObj = {
+        id: Date.now(),
+        text: commentText,
+        createdAt: new Date().toISOString(),
+        replies: [],
+      };
+
+      comments.push(replyObj);
+
+      saveProjectsToFile();
+      broadcast(
+        JSON.stringify({
+          type: "addNestedReply",
+          taskId: data.taskId,
+          projectId: data.projectId,
+          comment: replyObj,
+        })
+      );
     }
   });
 });
