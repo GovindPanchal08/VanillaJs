@@ -8,7 +8,7 @@
         "description": "thing",
         "dueDate": "2025-07-05",
         "assignee": "mujhe",
-        "status": "done",
+        "status": "todo",
         "priority": "high",
         "labels": [],
         "comments": [
@@ -68,6 +68,31 @@
                     "replies": []
                   }
                 ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "task-1752428964600",
+        "title": "UI",
+        "description": "Make this Responsive ",
+        "dueDate": "2025-07-16",
+        "assignee": "John",
+        "status": "inprogress",
+        "priority": "medium",
+        "labels": [],
+        "comments": [
+          {
+            "id": 1752429039976,
+            "text": "hey",
+            "createdAt": "2025-07-13T17:50:39.976Z",
+            "replies": [
+              {
+                "id": 1752429049764,
+                "text": "yes ",
+                "createdAt": "2025-07-13T17:50:49.764Z",
+                "replies": []
               }
             ]
           }

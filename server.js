@@ -92,29 +92,6 @@ wss.on("connection", (ws) => {
       ws.send(JSON.stringify({ type: "projectsList", projects }));
     }
 
-    // if (data.type === "addComment") {
-    //   const project = projects[data.projectId].tasks
-    //   if (!project) return;
-
-    //   const task = project.find((t) => t.id === data.taskId);
-    //   if (!task) return;
-
-    //   // For now, let's just push a basic sample comment
-    //   const commentText = data.comment || "New comment"; // You MUST send this from frontend
-    //   task.comments.push({ text: commentText, replies: [] });
-
-    //   // Optional: persist to file
-    //   saveProjectsToFile();
-
-    //   broadcast(
-    //     JSON.stringify({
-    //       type: "addComment",
-    //       taskId: data.taskId,
-    //       projectId: data.projectId,
-    //       comment: commentText,
-    //     })
-    //   );
-    // }
     if (data.type === "addNestedReply") {
       const projectEntry = projects[data.projectId];
       if (!projectEntry) return;
