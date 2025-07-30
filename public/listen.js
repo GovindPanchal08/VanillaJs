@@ -3,7 +3,7 @@ function connectWebSocket() {
   socket = new WebSocket(
     window.location.hostname === "localhost"
       ? "ws://localhost:3000"
-      : "wss://your-backend-name.onrender.com"
+      : "wss://task-5dtk.onrender.com"
   );
 
   // socket.addEventListener("open", () => {
