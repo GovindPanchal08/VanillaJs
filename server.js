@@ -21,6 +21,7 @@ let projects = {
 };
 
 // Load from file if exists
+
 if (fs.existsSync(DATA_FILE)) {
   projects = JSON.parse(fs.readFileSync(DATA_FILE));
 }

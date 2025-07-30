@@ -1,6 +1,10 @@
 let socket;
 function connectWebSocket() {
-  socket = new WebSocket("ws://localhost:3000");
+  socket = new WebSocket(
+    window.location.hostname === "localhost"
+      ? "ws://localhost:3000"
+      : "wss://your-backend-name.onrender.com"
+  );
 
   // socket.addEventListener("open", () => {
   //   console.log("WebSocket connection established");
